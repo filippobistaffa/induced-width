@@ -10,7 +10,7 @@
 
 #define log_fmt(A, B) log_string(A, fmt::format("{}", B))
 
-static float progress;
+static float log_progress;
 
 inline void log_title(std::string title) {
 
@@ -48,20 +48,20 @@ inline void log_string(std::string name, std::string val, std::string param = ""
 
 inline void log_progress_increase(float step, float tot) {
 
-    if (progress == tot) {
+    if (log_progress == tot) {
         return;
     }
-    if (progress == 0) {
+    if (log_progress == 0) {
         fmt::print("|");
     }
-    const size_t cur_p = (TOTAL_WIDTH - 2) * (progress / tot);
-    const size_t new_p = (TOTAL_WIDTH - 2) * ((progress + step) / tot);
+    const size_t cur_p = (TOTAL_WIDTH - 2) * (log_progress / tot);
+    const size_t new_p = (TOTAL_WIDTH - 2) * ((log_progress + step) / tot);
     for (size_t i = cur_p; i < new_p; ++i) {
         fmt::print("·");
         std::fflush(nullptr);
     }
-    progress += step;
-    if (progress == tot) {
+    log_progress += step;
+    if (log_progress == tot) {
         fmt::print("|\n");
     }
 }

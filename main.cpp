@@ -108,9 +108,12 @@ int main(int argc, char *argv[]) {
     auto start_t = std::chrono::high_resolution_clock::now();
     log_fmt("Variable order heuristic", ord_heur_names[ord_heur]);
     log_fmt("Tie-breaking heuristic", tie_heur_names[tie_heur]);
+    log_line();
     order = greedy_order(adj, ord_heur, tie_heur);
     std::chrono::duration<double> runtime = std::chrono::high_resolution_clock::now() - start_t;
+    log_line();
     log_fmt("Order computation runtime", fmt::format("{:%T}", runtime));
+    log_line();
 
     // compute induced width
     //fmt::print("Order: {}\n", order);
@@ -119,7 +122,13 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
-    log_fmt("Induced width", induced_width(adj, order));
+    log_line();
+    start_t = std::chrono::high_resolution_clock::now();
+    auto iw = induced_width(adj, order);
+    runtime = std::chrono::high_resolution_clock::now() - start_t;
+    log_line();
+    log_fmt("Induced width", iw);
+    log_fmt("Induced width computation runtime", fmt::format("{:%T}", runtime));
     log_line();
 
     return EXIT_SUCCESS;

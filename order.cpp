@@ -13,6 +13,7 @@
 #include <fmt/ranges.h>
 
 #include "io.hpp"
+#include "log.hpp"
 
 #define GET_MACRO(_1,_2,_3,NAME,...) NAME
 #define EACH_NONZERO(...) GET_MACRO(__VA_ARGS__, EACH_NONZERO_3, EACH_NONZERO_2)(__VA_ARGS__)
@@ -79,6 +80,7 @@ static inline void connect_neighbours(int order_heur, std::vector<std::vector<we
 
 std::vector<std::size_t> greedy_order(std::vector<std::vector<weight>> const &adj, int order_heur, int tie_heur) {
 
+    log_progress = 0;
     std::vector<std::size_t> order;
     std::vector<std::vector<weight>> tmp_adj(adj);
     std::unordered_set<std::size_t> not_marked(adj.size());
@@ -139,6 +141,7 @@ std::vector<std::size_t> greedy_order(std::vector<std::vector<weight>> const &ad
             }
         }
         order.push_back(sel);
+        log_progress_increase(1, adj.size());
     }
 
     return order;
@@ -146,6 +149,7 @@ std::vector<std::size_t> greedy_order(std::vector<std::vector<weight>> const &ad
 
 std::size_t induced_width(std::vector<std::vector<weight>> const &adj, std::vector<std::size_t> const &order) {
 
+    log_progress = 0;
     std::vector<std::vector<weight>> tmp_adj(adj);
     std::size_t w = 0;
 
@@ -162,6 +166,7 @@ std::size_t induced_width(std::vector<std::vector<weight>> const &adj, std::vect
                 }
             }
         }
+        log_progress_increase(1, adj.size());
     }
 
 	return w;
