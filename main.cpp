@@ -95,9 +95,10 @@ int main(int argc, char *argv[]) {
         log_title("https://github.com/filippobistaffa/induced-width");
         log_line();
         log_fmt("Instance", instance);
-        int inst_type;
-
         auto adj = read_adj(instance);
+        //print_adj(adj);
+        log_fmt("Number of variables", adj.size());
+        log_line();
 
         return EXIT_SUCCESS;
 }
