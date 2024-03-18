@@ -1,5 +1,7 @@
 #include "io.hpp"
 
+#include <fstream>  // ifstream, getline
+
 // fmt library
 #define FMT_HEADER_ONLY
 #include <fmt/core.h>
@@ -31,8 +33,35 @@ void print_adj(std::vector<std::vector<weight>> const &adj) {
         }
 }
 
+template <typename T>
+std::vector<T> tokenize(std::string &str, const char *sep = ",") {
+
+        char *dup = strdup(str.c_str());
+        char *token = strtok(dup, sep);
+        std::vector<T> v;
+
+        while (token != NULL) {
+                if constexpr (std::is_integral_v<T>) {
+                        v.push_back(atoi(token));
+                } else if (std::is_floating_point_v<T>) {
+                        v.push_back(atof(token));
+                }
+                token = strtok(NULL, sep);
+        }
+
+        free(dup);
+        return v;
+}
+
 std::vector<std::vector<weight>> read_adj(const char *instance) {
 
+    std::ifstream f(instance);
+    std::string str;
+    getline(f, str);
+    fmt::print("{}\n", str);
+    f.close();
+    auto tokens = tokenize<std::size_t>(str);
+    fmt::print("{}\n", tokens);
     std::vector<std::vector<weight>> adj;
     return adj;
 }
