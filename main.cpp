@@ -94,10 +94,32 @@ int main(int argc, char *argv[]) {
     log_title("Calculate the induced width of a constraint network");
     log_title("https://github.com/filippobistaffa/induced-width");
     log_line();
+
+    // read input file and construct adjacency matrix
     log_fmt("Instance", instance);
     auto adj = read_adj(instance);
     //print_adj(adj);
     log_fmt("Number of variables", adj.size());
+
+    // compute order according to the chosen heuristic
+    std::string ord_heur_names[] = { "WEIGHTED-MIN-FILL", "MIN-FILL", "MIN-INDUCED-WIDTH", "MIN-DEGREE" };
+    std::string tie_heur_names[] = { "MIN-UNIQUENESS", "RANDOM" };
+    std::vector<size_t> order;
+    auto start_t = std::chrono::high_resolution_clock::now();
+    log_fmt("Variable order heuristic", ord_heur_names[ord_heur]);
+    log_fmt("Tie-breaking heuristic", tie_heur_names[tie_heur]);
+    order = greedy_order(adj, ord_heur, tie_heur);
+    std::chrono::duration<double> runtime = std::chrono::high_resolution_clock::now() - start_t;
+    log_fmt("Order computation runtime", fmt::format("{:%T}", runtime));
+
+    // compute induced width
+    //fmt::print("Order: {}\n", order);
+    reverse(order.begin(), order.end());
+    std::vector<size_t> pos(order.size());
+    for (size_t i = 0; i < order.size(); ++i) {
+        pos[order[i]] = i;
+    }
+    log_fmt("Induced width", induced_width(adj, order));
     log_line();
 
     return EXIT_SUCCESS;
