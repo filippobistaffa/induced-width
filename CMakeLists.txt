@@ -35,3 +35,12 @@ include_directories(fmt/include)
 
 add_executable(${NAME} ${SOURCES})
 target_compile_options(${NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS} ${EXCLUDED_WARNINGS} ${OPTIMIZATION_COMPILE_FLAGS})
+
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+find_package(Gperftools)
+
+if(GPERFTOOLS_FOUND)
+    message(STATUS "Gperftools found")
+    LIST(APPEND LINK_LIBRARIES ${GPERFTOOLS_LIBRARIES})
+    target_link_libraries(${NAME} PRIVATE ${LINK_LIBRARIES})
+endif()
