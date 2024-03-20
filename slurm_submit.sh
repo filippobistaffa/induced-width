@@ -83,10 +83,6 @@ sbatch 1> $tmpfile <<EOF
 #SBATCH --mem=$memory
 #SBATCH --output=$out
 #SBATCH --error=$err
-#SBATCH --mail-type=begin
-#SBATCH --mail-type=end
-#SBATCH --mail-type=fail
-#SBATCH --mail-user=email@domain
 echo srun $LUSTRE/induced-width/induced-width -f $instance $args
 srun $LUSTRE/induced-width/induced-width -f $instance $args
 EOF
