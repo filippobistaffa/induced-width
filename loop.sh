@@ -27,6 +27,8 @@ function wait_empty_queue {
 step=200
 j=0
 
+mkdir -p log
+
 for instance in "$@"
 do
     if [[ $j == $step ]]
@@ -35,6 +37,6 @@ do
         j=0
     fi
     echo "Submitted $instance"
-    ./submit_slurm.sh -f $instance
+    ./submit_slurm.sh --file $instance --output log/${instance##*/}.out
     j=$((j+1))
 done
