@@ -37,6 +37,6 @@ do
         j=0
     fi
     echo "Submitted $instance"
-    ./submit_slurm.sh --file $instance --output log/${instance##*/}.out
+    ./slurm_submit.sh --file $instance --output log/${instance##*/}.out
     j=$((j+1))
 done
