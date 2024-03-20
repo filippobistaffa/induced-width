@@ -24,7 +24,7 @@ function wait_empty_queue {
     done
 }
 
-step=150
+step=100
 j=0
 
 mkdir -p log
