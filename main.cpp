@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 
     // compute induced width
     //fmt::print("Order: {}\n", order);
-    reverse(order.begin(), order.end());
+    std::reverse(order.begin(), order.end());
     std::vector<size_t> pos(order.size());
     for (size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
