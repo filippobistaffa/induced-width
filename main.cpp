@@ -122,7 +122,6 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
-    log_line();
     start_t = std::chrono::high_resolution_clock::now();
     auto iw = induced_width(adj, order);
     runtime = std::chrono::high_resolution_clock::now() - start_t;
