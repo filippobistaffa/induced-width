@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     // compute order according to the chosen heuristic
     std::string ord_heur_names[] = { "WEIGHTED-MIN-FILL", "MIN-FILL", "MIN-INDUCED-WIDTH", "MIN-DEGREE" };
     std::string tie_heur_names[] = { "MIN-UNIQUENESS", "RANDOM" };
-    std::vector<size_t> order;
+    std::vector<std::size_t> order;
     auto start_t = std::chrono::high_resolution_clock::now();
     log_fmt("Variable order heuristic", ord_heur_names[ord_heur]);
     log_fmt("Tie-breaking heuristic", tie_heur_names[tie_heur]);
@@ -118,8 +118,8 @@ int main(int argc, char *argv[]) {
     // compute induced width
     //fmt::print("Order: {}\n", order);
     std::reverse(order.begin(), order.end());
-    std::vector<size_t> pos(order.size());
-    for (size_t i = 0; i < order.size(); ++i) {
+    std::vector<std::size_t> pos(order.size());
+    for (std::size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
     start_t = std::chrono::high_resolution_clock::now();
