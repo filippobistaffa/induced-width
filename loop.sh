@@ -42,7 +42,7 @@ do
             shift
         ;;
         *)
-            args="$args$key "
+            instances="$instances$key "
             shift
         ;;
     esac
@@ -51,7 +51,7 @@ done
 j=0
 mkdir -p $directory
 
-for instance in "$@"
+for instance in $instances
 do
     if [[ $j == $step ]]
     then
