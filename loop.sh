@@ -24,10 +24,32 @@ function wait_empty_queue {
     done
 }
 
+directory="log"
 step=100
-j=0
 
-mkdir -p log
+while [[ $# > 0 ]]
+do
+    key="$1"
+    case $key in
+        --dir)
+            shift
+            directory="$1"
+            shift
+        ;;
+        --step)
+            shift
+            step="$1"
+            shift
+        ;;
+        *)
+            args="$args$key "
+            shift
+        ;;
+    esac
+done
+
+j=0
+mkdir -p $directory
 
 for instance in "$@"
 do
@@ -37,6 +59,6 @@ do
         j=0
     fi
     echo "Submitted $instance"
-    ./slurm_submit.sh --file $instance --output log/${instance##*/}.out
+    ./slurm_submit.sh --file $instance --output $directory/${instance##*/}.out
     j=$((j+1))
 done
