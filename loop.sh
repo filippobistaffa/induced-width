@@ -26,6 +26,9 @@ function wait_empty_queue {
 
 directory="log"
 step=100
+time="1:00:00"
+cpus="4"
+memory="8GB"
 
 while [[ $# > 0 ]]
 do
@@ -39,6 +42,21 @@ do
         --step)
             shift
             step="$1"
+            shift
+        ;;
+        --time)
+            shift
+            time="$1"
+            shift
+        ;;
+        --cpus)
+            shift
+            cpus="$1"
+            shift
+        ;;
+        --memory)
+            shift
+            memory="$1"
             shift
         ;;
         *)
@@ -59,6 +77,6 @@ do
         j=0
     fi
     echo "Submitted $instance"
-    ./slurm_submit.sh --file $instance --output $directory/${instance##*/}.out
+    ./slurm_submit.sh --file $instance --output $directory/${instance##*/}.out --time $time --cpus $cpus --memory $memory
     j=$((j+1))
 done
