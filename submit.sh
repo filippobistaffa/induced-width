@@ -6,9 +6,11 @@ instance=""
 # default job parameters
 out=""
 err="/dev/null"
+log="/dev/null"
 time="1:00:00"
 cpus="4"
 memory="8GB"
+priority=0
 
 args=""
 
@@ -46,6 +48,11 @@ do
             memory="$1"
             shift
         ;;
+        -p|--priority)
+            shift
+            priority="$1"
+            shift
+        ;;
         *)
             args="$args$key "
             shift
@@ -70,7 +77,29 @@ then
     out=${instance##*/}.out
 fi
 
-if hash sbatch 2>/dev/null
+if hash condor_submit 2>/dev/null
+then
+
+home="/lhome/ext/iiia021/iiia0211"
+root="$home/induced-width"
+exe="$root/induced-width"
+
+tmpfile=$(mktemp)
+condor_submit 1> $tmpfile <<EOF
+universe = vanilla
+stream_output = True
+stream_error = True
+executable = $exe
+arguments = -f $instance $args
+log = $log
+output = $out
+error = $err
+getenv = true
+priority = $priority
+queue
+EOF
+
+elif hash sbatch 2>/dev/null
 then
 
 tmpfile=$(mktemp)
