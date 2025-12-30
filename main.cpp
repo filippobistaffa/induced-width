@@ -16,7 +16,7 @@
 
 static inline void print_usage(const char *bin) {
 
-    fmt::print(stderr, "Usage: {} [-h] [-a bub|brz|hop] [-i bound] [-o wmf|mf|miw|md|random|*.pt] ", bin);
+    fmt::print(stderr, "Usage: {} [-h] [-o wmf|mf|miw|md|random|*.pt] ", bin);
     fmt::print(stderr, "[-t unique|random] [-s seed] [-O order] [-r] -f instance\n");
 }
 
