@@ -9,7 +9,6 @@
 #include "order.hpp"
 
 // fmt library
-#define FMT_HEADER_ONLY
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 #include <fmt/chrono.h>
