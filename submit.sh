@@ -5,8 +5,8 @@ instance=""
 
 # default job parameters
 out=""
+log=""
 err="/dev/null"
-log="/dev/null"
 time="1:00:00"
 cpus="4"
 memory="8GB"
@@ -75,6 +75,11 @@ fi
 if [ -z "$out" ]
 then
     out=${instance##*/}.out
+fi
+
+if [ -z "$log" ]
+then
+    log=${instance##*/}.log
 fi
 
 if hash condor_submit 2>/dev/null
