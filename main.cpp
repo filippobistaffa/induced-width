@@ -131,11 +131,14 @@ int main(int argc, char *argv[]) {
     for (std::size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
+    auto after_order = std::chrono::high_resolution_clock::now();
     auto iw = induced_width(adj, order);
-    const float runtime_iw = ELAPSED(start);
+    const float runtime_iw = ELAPSED(after_order);
+    const float runtime_total = ELAPSED(start);
     log_line();
     log_fmt("Induced width", iw);
     log_fmt("Induced width computation runtime", fmt::format("{:.2f}s", runtime_iw));
+    log_fmt("Total computation runtime", fmt::format("{:.2f}s", runtime_total));
     log_line();
 
     // export json if necessary
@@ -151,6 +154,7 @@ int main(int argc, char *argv[]) {
             JSON_FIELD(iw),
             JSON_FIELD(runtime_iw),
             JSON_FIELD(runtime_order),
+            JSON_FIELD(runtime_total),
         };
         std::ofstream of(json_path);
         of << json.dump(2);
