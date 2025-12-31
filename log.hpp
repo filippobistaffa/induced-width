@@ -7,13 +7,14 @@
 #define TOTAL_WIDTH 79
 #define COLUMN_WIDTH ((TOTAL_WIDTH - 7) / 2)
 
-#define log_fmt(A, B) log_string(A, fmt::format("{}", B))
+#define log_fmt(...) _log_fmt(__VA_ARGS__, "")
+#define _log_fmt(A, B, C, ...) log_string(A, fmt::format("{}", B), C)
 
 static float log_progress;
 
-inline void log_title(std::string title) {
+inline void log_title(std::string title, size_t add_space = 0) {
 
-    fmt::print("| {1:^{0}} |\n", TOTAL_WIDTH - 4, title);
+    fmt::print("| {1:^{0}} |\n", TOTAL_WIDTH - 4 + add_space, title);
     std::fflush(nullptr);
 }
 
@@ -23,14 +24,14 @@ inline void log_line() {
     std::fflush(nullptr);
 }
 
-inline void log_string(std::string name, std::string val, std::string param = "") {
+inline void log_string(std::string name, std::string val, std::string param = "", size_t add_space = 0) {
 
     fmt::print("| ");
     const size_t par_space = param.length() + param.length() ? 5 : 0;
-    if (name.length() > COLUMN_WIDTH - par_space) {
-        fmt::print("{}...", name.substr(0, COLUMN_WIDTH - 3 - par_space));
+    if (name.length() > COLUMN_WIDTH - par_space + add_space) {
+        fmt::print("{}...", name.substr(0, COLUMN_WIDTH - 3 - par_space + add_space));
     } else {
-        fmt::print("{1:<{0}}", COLUMN_WIDTH - par_space, name);
+        fmt::print("{1:<{0}}", COLUMN_WIDTH - par_space + add_space, name);
     }
     if (param.length()) {
         fmt::print(" (-{})", param);
@@ -65,4 +66,15 @@ inline void log_progress_increase(float step, float tot) {
     }
 }
 
-#endif /* LOG_HPP_ */
+#include "timer.hpp"
+static float prev;
+
+template <typename T1, typename T2>
+inline void log_elapsed_prev(T1 start, T2 val) {
+
+    float elapsed = ELAPSED(start);
+    log_fmt(fmt::format("{:>{}s}", fmt::format("{0}s ({1:+f}s)", elapsed, elapsed - prev), COLUMN_WIDTH), val);
+    prev = elapsed;
+}
+
+#endif

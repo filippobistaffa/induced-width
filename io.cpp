@@ -52,7 +52,7 @@ std::vector<T> tokenize(std::string &str, const char *sep = ",") {
     return v;
 }
 
-std::vector<std::vector<weight>> read_adj(const char *instance) {
+std::vector<std::vector<weight>> read_adj(const std::string& instance) {
 
     std::ifstream f(instance);
     std::string str;

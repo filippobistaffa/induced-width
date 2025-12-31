@@ -1,12 +1,18 @@
 #include "main.hpp"
 
+#include <filesystem>   // std::filesystem::exists
 #include <chrono>       // time measurement
-#include <string.h>     // strcmp
 #include <unistd.h>     // getopt
+#include <string>       // string
+#include <fstream>      // std::ofstream
 
 #include "io.hpp"
 #include "log.hpp"
 #include "order.hpp"
+#include "timer.hpp"
+
+// json library
+#include "json.hpp"
 
 // fmt library
 #include <fmt/core.h>
@@ -15,38 +21,39 @@
 
 static inline void print_usage(const char *bin) {
 
-    fmt::print(stderr, "Usage: {} [-h] [-o wmf|mf|miw|md|random|*.pt] ", bin);
-    fmt::print(stderr, "[-t unique|random] [-s seed] [-O order] [-r] -f instance\n");
-}
-
-static inline bool exists(const char *filename) {
-
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        return false;
-    } else {
-        fclose(file);
-        return true;
-    }
+    fmt::print(stderr, "Usage: {} [-h] [-o wmf|mf|miw|md|random] ", bin);
+    fmt::print(stderr, "[-t unique|random] [-j json] -f instance\n");
 }
 
 int main(int argc, char *argv[]) {
 
+    auto start = std::chrono::high_resolution_clock::now();
     int ord_heur = O_WEIGHTED_MIN_FILL;
     int tie_heur = T_UNIQUENESS;
-    char *instance = NULL;
+    std::string instance;
+    size_t seed = 0;
     int opt;
 
-    while ((opt = getopt(argc, argv, "f:o:t:s:O:hr")) != -1) {
+    // export results to json
+    std::string json_path;
+    nlohmann::json json;
+
+    while ((opt = getopt(argc, argv, "f:o:t:s:j:h")) != -1) {
         switch (opt) {
             case 'f':
-                if (exists(optarg)) {
+                if (std::filesystem::exists(optarg)) {
                     instance = optarg;
                 } else {
                     fmt::print(stderr, "{}: file not found -- '{}'\n", argv[0], optarg);
                     print_usage(argv[0]);
                     return EXIT_FAILURE;
                 }
+                continue;
+            case 'j':
+                json_path = optarg;
+                continue;
+            case 's':
+                seed = atoi(optarg);
                 continue;
             case 'o':
                 if (strcmp(optarg, "wmf") == 0) {
@@ -60,7 +67,7 @@ int main(int argc, char *argv[]) {
                 } else if (strcmp(optarg, "random") == 0) {
                     ord_heur = O_RANDOM;
                 } else {
-                    fmt::print(stderr, "{}: file not found -- '{}'\n", argv[0], optarg);
+                    fmt::print(stderr, "{}: invalid order heuristic -- '{}'\n", argv[0], optarg);
                     print_usage(argv[0]);
                     return EXIT_FAILURE;
                 }
@@ -83,7 +90,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (!instance) {
+    if (instance.empty()) {
         fmt::print(stderr, "{}: instance not specified!\n", argv[0]);
         print_usage(argv[0]);
         return EXIT_FAILURE;
@@ -100,18 +107,20 @@ int main(int argc, char *argv[]) {
     //print_adj(adj);
     log_fmt("Number of variables", adj.size());
 
+    srand(seed);
+    log_fmt("Seed", seed);
+
     // compute order according to the chosen heuristic
     std::string ord_heur_names[] = { "WEIGHTED-MIN-FILL", "MIN-FILL", "MIN-INDUCED-WIDTH", "MIN-DEGREE" };
     std::string tie_heur_names[] = { "MIN-UNIQUENESS", "RANDOM" };
     std::vector<std::size_t> order;
-    auto start_t = std::chrono::high_resolution_clock::now();
     log_fmt("Variable order heuristic", ord_heur_names[ord_heur]);
     log_fmt("Tie-breaking heuristic", tie_heur_names[tie_heur]);
     log_line();
     order = greedy_order(adj, ord_heur, tie_heur);
-    std::chrono::duration<double> runtime = std::chrono::high_resolution_clock::now() - start_t;
     log_line();
-    log_fmt("Order computation runtime", fmt::format("{:%T}", runtime));
+    const float runtime_order = ELAPSED(start);
+    log_fmt("Order computation runtime", fmt::format("{:.2f}s", runtime_order));
     log_line();
 
     // compute induced width
@@ -121,13 +130,30 @@ int main(int argc, char *argv[]) {
     for (std::size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
-    start_t = std::chrono::high_resolution_clock::now();
     auto iw = induced_width(adj, order);
-    runtime = std::chrono::high_resolution_clock::now() - start_t;
+    const float runtime_iw = ELAPSED(start);
     log_line();
     log_fmt("Induced width", iw);
-    log_fmt("Induced width computation runtime", fmt::format("{:%T}", runtime));
+    log_fmt("Induced width computation runtime", fmt::format("{:.2f}s", runtime_iw));
     log_line();
+
+    // export json if necessary
+    #define JSON_FIELD(VAR) {#VAR, VAR}
+    if (!json_path.empty()) {
+        json["input"] = {
+            JSON_FIELD(instance),
+            JSON_FIELD(seed),
+            JSON_FIELD(ord_heur),
+        };
+        json["output"] = {
+            JSON_FIELD(iw),
+            JSON_FIELD(runtime_iw),
+            JSON_FIELD(runtime_order),
+        };
+        std::ofstream of(json_path);
+        of << json.dump(2);
+        of.close();
+    }
 
     return EXIT_SUCCESS;
 }

@@ -38,6 +38,12 @@ FetchContent_Declare(fmt
 )
 FetchContent_MakeAvailable(fmt)
 
+# json library
+set(JSON_HPP_URL "https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp")
+set(JSON_HPP_PATH "${CMAKE_BINARY_DIR}/json.hpp")
+file(DOWNLOAD ${JSON_HPP_URL} ${JSON_HPP_PATH})
+include_directories(${CMAKE_BINARY_DIR})
+
 add_executable(${NAME} ${SOURCES})
 target_compile_options(${NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS} ${EXCLUDED_WARNINGS} ${OPTIMIZATION_COMPILE_FLAGS})
 target_link_libraries(${NAME} PRIVATE fmt::fmt)
