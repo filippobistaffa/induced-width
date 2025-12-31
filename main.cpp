@@ -105,7 +105,8 @@ int main(int argc, char *argv[]) {
     log_fmt("Instance", instance);
     auto adj = read_adj(instance);
     //print_adj(adj);
-    log_fmt("Number of variables", adj.size());
+    const auto variables = adj.size();
+    log_fmt("Number of variables", variables);
 
     srand(seed);
     log_fmt("Seed", seed);
@@ -142,6 +143,7 @@ int main(int argc, char *argv[]) {
     if (!json_path.empty()) {
         json["input"] = {
             JSON_FIELD(instance),
+            JSON_FIELD(variables),
             JSON_FIELD(seed),
             JSON_FIELD(ord_heur),
         };

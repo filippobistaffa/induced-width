@@ -33,6 +33,11 @@ do
             err="$1"
             shift
         ;;
+        --log)
+            shift
+            log="$1"
+            shift
+        ;;
         --time)
             shift
             time="$1"

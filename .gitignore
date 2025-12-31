@@ -4,3 +4,4 @@ _deps/
 cmake_install.cmake
 Makefile
 induced-width
+json.hpp
