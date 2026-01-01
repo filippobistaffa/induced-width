@@ -26,6 +26,7 @@ function wait_empty_queue {
 
 directory="log"
 step=100
+extra=""
 
 while [[ $# > 0 ]]
 do
@@ -41,6 +42,11 @@ do
             step="$1"
             shift
         ;;
+        -*)
+            shift
+            extra="$extra$key $1 "
+            shift
+            ;;
         *)
             instances="$instances$key "
             shift
@@ -60,6 +66,6 @@ do
     fi
     echo "Submitted $instance"
     basename=${instance##*/}
-    ./submit.sh --file $instance --output $directory/$basename.out --log $directory/$basename.log --error $directory/$basename.err -j $directory/$basename.json
+    ./submit.sh --file $instance --output $directory/$basename.out --log $directory/$basename.log --error $directory/$basename.err -j $directory/$basename.json $extra
     j=$((j+1))
 done
