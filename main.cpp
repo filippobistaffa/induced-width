@@ -154,6 +154,7 @@ int main(int argc, char *argv[]) {
             JSON_FIELD(variables),
             JSON_FIELD(seed),
             JSON_FIELD(ord_heur, ord_heur_names[ord_heur]),
+            JSON_FIELD(tie_heur, tie_heur_names[tie_heur]),
         };
         json["output"] = {
             JSON_FIELD(iw),
