@@ -142,13 +142,18 @@ int main(int argc, char *argv[]) {
     log_line();
 
     // export json if necessary
-    #define JSON_FIELD(VAR) {#VAR, VAR}
+    #define JSON_FIELD1(VAR) {#VAR, VAR}
+    #define JSON_FIELD2(VAR, VALUE) {#VAR, VALUE}
+    #define EXPAND(x) x
+    #define GET_MACRO(_1, _2, name, ...) name
+    #define JSON_FIELD(...) EXPAND( GET_MACRO(__VA_ARGS__, JSON_FIELD2, JSON_FIELD1)(__VA_ARGS__) )
+
     if (!json_path.empty()) {
         json["input"] = {
             JSON_FIELD(instance),
             JSON_FIELD(variables),
             JSON_FIELD(seed),
-            JSON_FIELD(ord_heur),
+            JSON_FIELD(ord_heur, ord_heur_names[ord_heur]),
         };
         json["output"] = {
             JSON_FIELD(iw),
