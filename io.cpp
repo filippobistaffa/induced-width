@@ -52,13 +52,55 @@ std::vector<T> tokenize(std::string &str, const char *sep = ",") {
     return v;
 }
 
+#include <archive.h>
+#include <archive_entry.h>
+#include <stdexcept>
+
+std::string read_from_tar(const std::string& instance) {
+
+    struct archive* a = archive_read_new();
+    archive_read_support_format_tar(a);
+    archive_read_support_filter_all(a);
+
+    if (archive_read_open_filename(a, instance.c_str(), 10240) != ARCHIVE_OK) {
+        throw std::runtime_error(archive_error_string(a));
+    }
+
+    struct archive_entry* entry;
+    std::string content;
+
+    while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+        if (archive_entry_filetype(entry) == AE_IFREG) {
+            const size_t size = archive_entry_size(entry);
+            content.resize(size);
+            archive_read_data(a, content.data(), size);
+            break;
+        }
+        archive_read_data_skip(a);
+    }
+
+    archive_read_free(a);
+
+    if (content.empty()) {
+        throw std::runtime_error("No regular file found in archive");
+    }
+
+    return content;
+}
+
 std::vector<std::vector<weight>> read_adj(const std::string& instance) {
 
-    std::ifstream f(instance);
     std::string str;
-    getline(f, str);
-    //fmt::print("{}\n", str);
-    f.close();
+
+    if (instance.ends_with(".tar.gz") || instance.ends_with(".tar.xz") || instance.ends_with(".tar")) {
+        str = read_from_tar(instance);
+    } else {
+        std::ifstream f(instance);
+        if (!f) {
+            throw std::runtime_error("Cannot open file: " + instance);
+        }
+        std::getline(f, str);
+    }
 
     auto tokens = tokenize<std::size_t>(str);
     std::size_t n = sqrt(tokens.size());

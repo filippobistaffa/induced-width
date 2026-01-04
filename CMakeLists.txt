@@ -48,6 +48,9 @@ add_executable(${NAME} ${SOURCES})
 target_compile_options(${NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS} ${EXCLUDED_WARNINGS} ${OPTIMIZATION_COMPILE_FLAGS})
 target_link_libraries(${NAME} PRIVATE fmt::fmt)
 
+find_package(LibArchive REQUIRED)
+target_link_libraries(${NAME} PRIVATE LibArchive::LibArchive)
+
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 find_package(Gperftools)
 
