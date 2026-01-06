@@ -54,7 +54,9 @@ do
     esac
 done
 
+i=0
 j=0
+n=$( echo $instances | wc -w )
 mkdir -p $directory
 
 for instance in $instances
@@ -64,7 +66,8 @@ do
         wait_empty_queue
         j=0
     fi
-    echo "Submitted $instance"
+    i=$((i+1))
+    echo "Submitted $instance ($i\$n) with arguments: $extra"
     basename=${instance##*/}
     ./submit.sh --file $instance --output $directory/$basename.out --log $directory/$basename.log --error $directory/$basename.err -j $directory/$basename.json $extra
     j=$((j+1))
