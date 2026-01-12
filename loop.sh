@@ -67,7 +67,7 @@ do
         j=0
     fi
     i=$((i+1))
-    echo "Submitted $instance ($i\$n) with arguments: $extra"
+    echo "Submitted $instance ($i/$n) with arguments: $extra"
     basename=${instance##*/}
     ./submit.sh --file $instance --output $directory/$basename.out --log $directory/$basename.log --error $directory/$basename.err -j $directory/$basename.json $extra
     j=$((j+1))
