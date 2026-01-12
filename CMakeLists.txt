@@ -32,11 +32,33 @@ set(SOURCES
 )
 
 include(FetchContent)
+
 FetchContent_Declare(fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
     GIT_TAG master
 )
 FetchContent_MakeAvailable(fmt)
+
+# Disable all tools
+set(ENABLE_TAR OFF CACHE BOOL "" FORCE)
+set(ENABLE_CPIO OFF CACHE BOOL "" FORCE)
+set(ENABLE_CAT OFF CACHE BOOL "" FORCE)
+set(ENABLE_UNZIP OFF CACHE BOOL "" FORCE)
+
+# Disable extras
+set(ENABLE_TEST OFF CACHE BOOL "" FORCE)
+set(ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+
+# Compression backends you actually need
+set(ENABLE_ZLIB ON CACHE BOOL "" FORCE)   # .tar.gz
+set(ENABLE_LZMA ON CACHE BOOL "" FORCE)   # .tar.xz
+set(ENABLE_ZSTD OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(libarchive
+    GIT_REPOSITORY https://github.com/libarchive/libarchive.git
+    GIT_TAG v3.8.5
+)
+FetchContent_MakeAvailable(libarchive)
 
 # json library
 set(JSON_HPP_URL "https://raw.githubusercontent.com/nlohmann/json/develop/single_include/nlohmann/json.hpp")
@@ -48,8 +70,9 @@ add_executable(${NAME} ${SOURCES})
 target_compile_options(${NAME} PRIVATE ${PEDANTIC_COMPILE_FLAGS} ${EXCLUDED_WARNINGS} ${OPTIMIZATION_COMPILE_FLAGS})
 target_link_libraries(${NAME} PRIVATE fmt::fmt)
 
-find_package(LibArchive REQUIRED)
-target_link_libraries(${NAME} PRIVATE LibArchive::LibArchive)
+#find_package(LibArchive REQUIRED)
+#target_link_libraries(${NAME} PRIVATE LibArchive::LibArchive)
+target_link_libraries(${NAME} PRIVATE archive)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 find_package(Gperftools)
