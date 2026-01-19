@@ -156,8 +156,10 @@ int main(int argc, char *argv[]) {
             JSON_FIELD(ord_heur, ord_heur_names[ord_heur]),
             JSON_FIELD(tie_heur, tie_heur_names[tie_heur]),
         };
+        std::reverse(order.begin(), order.end());
         json["output"] = {
             JSON_FIELD(iw),
+            JSON_FIELD(order),
             JSON_FIELD(runtime_iw),
             JSON_FIELD(runtime_order),
             JSON_FIELD(runtime_total),
