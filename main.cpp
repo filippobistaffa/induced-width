@@ -131,8 +131,8 @@ int main(int argc, char *argv[]) {
     for (std::size_t i = 0; i < order.size(); ++i) {
         pos[order[i]] = i;
     }
-    auto after_order = std::chrono::high_resolution_clock::now();
-    auto iw = induced_width(adj, order);
+    const auto after_order = std::chrono::high_resolution_clock::now();
+    const auto iw = induced_width(adj, order);
     const float runtime_iw = ELAPSED(after_order);
     const float runtime_total = ELAPSED(start);
     log_line();
