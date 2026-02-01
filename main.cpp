@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    log_line();
+    log_line("-");
     log_title("Calculate the induced width of a constraint network");
     log_title("https://github.com/filippobistaffa/induced-width");
     log_line();
