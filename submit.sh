@@ -1,5 +1,8 @@
 #!/bin/bash
 
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+exe="$root/induced-width"
+
 # default instance parameters
 instance=""
 
@@ -90,10 +93,6 @@ fi
 if hash condor_submit 2>/dev/null
 then
 
-home="/lhome/ext/iiia021/iiia0211"
-root="$home/induced-width"
-exe="$root/induced-width"
-
 tmpfile=$(mktemp)
 condor_submit 1> $tmpfile <<EOF
 universe = vanilla
@@ -122,8 +121,8 @@ sbatch 1> $tmpfile <<EOF
 #SBATCH --mem=$memory
 #SBATCH --output=$out
 #SBATCH --error=$err
-echo srun $LUSTRE/induced-width/induced-width -f $instance $args
-srun $LUSTRE/induced-width/induced-width -f $instance $args
+echo srun $exe -f $instance $args
+srun $exe -f $instance $args
 EOF
 
 else
