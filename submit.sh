@@ -1,7 +1,8 @@
 #!/bin/bash
 
+name="induced-width"
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-exe="$root/induced-width"
+exe="$root/$name"
 
 # default instance parameters
 instance=""
@@ -114,7 +115,7 @@ then
 tmpfile=$(mktemp)
 sbatch 1> $tmpfile <<EOF
 #!/bin/bash
-#SBATCH --job-name=iw-${instance##*/}
+#SBATCH --job-name=$name-${instance##*/}
 #SBATCH --time=$time
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=$cpus
